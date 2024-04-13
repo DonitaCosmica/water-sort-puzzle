@@ -24,3 +24,4 @@ $(TARGET): $(SOURCES) $(HEADERS)
 clean:
 	rm -f $(TARGET)
 
+.PHONY: clean

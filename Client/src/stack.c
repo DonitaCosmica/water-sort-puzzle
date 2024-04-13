@@ -1,15 +1,5 @@
 #include "../include/stack.h"
 
-tNodeStack *newStackNode(char element)
-{
-  tNodeStack *node = (tNodeStack *)malloc(sizeof(tNodeStack));
-
-  node->element = element;
-  node->prev = NULL;
-
-  return node;
-}
-
 tStack newStack()
 {
   tStack stack = (tStack)malloc(sizeof(Stack));
@@ -18,6 +8,16 @@ tStack newStack()
   stack->size = 0;
 
   return stack;
+}
+
+static tNodeStack *newNode(char element)
+{
+  tNodeStack *node = (tNodeStack *)malloc(sizeof(tNodeStack));
+
+  node->element = element;
+  node->prev = NULL;
+
+  return node;
 }
 
 bool isStackFull(tStack stack)
@@ -33,54 +33,54 @@ bool isStackEmpty(tStack stack)
 void destroyStack(tStack stack)
 {
   free(stack);
-  printf("Stack destruido\n");
+  puts("Stack destruido");
 }
 
 void push(tStack stack, char element)
 {
-  if(!isStackFull(stack))
+  if(isStackFull(stack))
   {
-    tNodeStack *node = newStackNode(element);
-
-    node->prev = stack->top;
-    stack->top = node;
-    stack->size++;
+    puts("El stack esta lleno");
+    return;
   }
-  else
-    printf("El stack esta lleno\n");
+
+  tNodeStack *node = newNode(element);
+
+  node->prev = stack->top;
+  stack->top = node;
+  stack->size++;
 }
 
 char pop(tStack stack)
 {
-  if(!isStackEmpty(stack))
+  if(isStackEmpty(stack))
   {
-    tNodeStack *node = stack->top;
-    stack->top = node->prev;
+    puts("El stack esta vacio");
+    return -1;
+  }
 
-    char element = node->element;
-    free(node);
-    stack->size--;
-    return element;
-  }
-  else
-  {
-    printf("El stack esta vacio\n");
-    return 0;
-  }
+  tNodeStack *node = stack->top;
+  stack->top = node->prev;
+
+  char element = node->element;
+  free(node);
+  stack->size--;
+  return element;
 }
 
 void printStack(tStack stack)
 {
-  if(!isStackEmpty(stack))
+  if(isStackEmpty(stack))
   {
-    tNodeStack *node = stack->top;
-
-    while(node != NULL)
-    {
-      printf("Element: %c\n", node->element);
-      node = node->prev;
-    }
+    puts("No se puede mostrar el stack porque esta vacio");
+    return;
   }
-  else
-    printf("No se puede mostrar el stack porque esta vacio\n");
+
+  tNodeStack *node = stack->top;
+
+  while (node != NULL)
+  {
+    printf("Element: %c\n", node->element);
+    node = node->prev;
+  }
 }

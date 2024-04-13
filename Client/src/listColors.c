@@ -10,11 +10,10 @@ tList newList()
   return list;
 }
 
-tNodeList *newListNode(unsigned short bitPosition)
+static tNodeList *newNode(unsigned short bitPosition)
 {
   tNodeList *node = (tNodeList *)malloc(sizeof(tNodeList));
   node->limit = BMAX;
-  node->colorPosition = (1 << bitPosition);
 
   switch (bitPosition)
   {
@@ -28,6 +27,30 @@ tNodeList *newListNode(unsigned short bitPosition)
   }
 
   return node;
+}
+
+static unsigned short getRandomNodeNumber(unsigned short listSize)
+{
+  return (rand() % listSize);
+}
+
+char getRandomCharacter(tList list)
+{
+  if(isListEmpty(list))
+  {
+    puts("La lista esta vacia");
+    return -1;
+  }
+
+  int i = 0;
+  unsigned short randomIndex = getRandomNodeNumber(list->size);
+  tNodeList *currentNode = list->head;
+
+  for(; i < randomIndex; i++)
+    currentNode = currentNode->sig;
+
+  currentNode->limit--;
+  return currentNode->color;
 }
 
 bool allBallsAreUsed(tNodeList *node)
@@ -48,76 +71,71 @@ bool isListEmpty(tList list)
 void destroyList(tList list)
 {
   free(list);
-  printf("Lista destruida\n");
+  puts("Lista destruida");
 }
 
 void addNode(tList list, unsigned short bitPosition)
 {
-  if(!isListFull(list))
+  if(isListFull(list))
   {
-    tNodeList *node = newListNode(bitPosition);
+    puts("La lista esta llena");
+    return;
+  }
+  tNodeList *node = newNode(bitPosition);
 
-    if(!isListEmpty(list))
-    {
-      tNodeList *aux = list->head;
+  if(!isListEmpty(list))
+  {
+    tNodeList *aux = list->head;
 
-      while(aux->sig != NULL)
-        aux = aux->sig;
+    while(aux->sig != NULL)
+      aux = aux->sig;
 
-      aux->sig = node;
-    }
-    else
-      list->head = node;
-
-    list->size++;
+    aux->sig = node;
   }
   else
-    printf("La lista esta llena\n");
+    list->head = node;
+
+  list->size++;
 }
 
 void deleteNode(tList list, char color)
 {
-  if(!isListEmpty(list))
+  if(isListEmpty(list))
   {
-    tNodeList *prev = NULL;
-    tNodeList *aux = list->head;
-
-    while(aux != NULL && aux->color != color)
-    {
-      prev = aux;
-      aux = aux->sig;
-    }
-
-    if(aux != NULL)
-    {
-      if(prev != NULL)
-        prev->sig = aux->sig;
-      else
-        list->head = aux->sig;
-
-      free(aux);
-    }
-    else
-      printf("No se encontro el color\n");
+    puts("La lista esta vacia");
+    return;
   }
-  else
-    printf("La lista esta vacia\n");
+
+  tNodeList *prev = NULL;
+  tNodeList *aux = list->head;
+
+  while(aux != NULL && aux->color != color)
+  {
+    prev = aux;
+    aux = aux->sig;
+  }
+
+  if(aux != NULL)
+  {
+    (prev != NULL) ? (prev->sig = aux->sig) : (list->head = aux->sig);
+    free(aux);
+  }
 }
 
 void printList(tList list)
 {
-  if(!isListEmpty(list))
+  if(isListEmpty(list))
   {
-    tNodeList *aux = list->head;
-
-    while(aux != NULL)
-    {
-      printf("Color: %c\n", aux->color);
-      printf("Limit: %hu\n", aux->limit);
-      printf("Color Position: %u\n", aux->colorPosition);
-      aux = aux->sig;
-    }
+    puts("No se puede imprimir una lista vacia");
+    return;
   }
-  else
-    printf("No se puede imprimir una lista vacia\n");
+
+  tNodeList *aux = list->head;
+
+  while(aux != NULL)
+  {
+    printf("Color: %c\n", aux->color);
+    printf("Limit: %hu\n", aux->limit);
+    aux = aux->sig;
+  }
 }

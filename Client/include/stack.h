@@ -16,7 +16,7 @@ typedef struct NodeStack
 typedef struct
 {
   tNodeStack *top;
-  int size;
+  unsigned short size : 3;
 } Stack;
 
 typedef Stack* tStack;
