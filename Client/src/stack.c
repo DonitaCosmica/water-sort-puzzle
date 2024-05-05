@@ -4,8 +4,11 @@ tStack newStack()
 {
   tStack stack = (tStack)malloc(sizeof(Stack));
 
-  stack->top = NULL;
-  stack->size = 0;
+  if(stack != NULL)
+  {
+    stack->top = NULL;
+    stack->size = 0;
+  }
 
   return stack;
 }
@@ -14,8 +17,11 @@ static tNodeStack *newNode(char element)
 {
   tNodeStack *node = (tNodeStack *)malloc(sizeof(tNodeStack));
 
-  node->element = element;
-  node->prev = NULL;
+  if(node != NULL)
+  {
+    node->element = element;
+    node->prev = NULL;
+  }
 
   return node;
 }
@@ -45,6 +51,11 @@ void push(tStack stack, char element)
   }
 
   tNodeStack *node = newNode(element);
+  if(node == NULL)
+  {
+    puts("Error al crear un nodo del stack");
+    return;
+  }
 
   node->prev = stack->top;
   stack->top = node;

@@ -23,12 +23,13 @@ typedef struct
 } List;
 
 typedef List* tList;
+typedef void (*onDeleteNode)(tList, char);
 
 tList newList();
 bool isListFull(tList);
 bool isListEmpty(tList);
 bool allBallsAreUsed(tNodeList *);
-char getRandomCharacter(tList);
+char getRandomCharacter(tList, onDeleteNode);
 void addNode(tList, unsigned short);
 void deleteNode(tList, char);
 void destroyList(tList);

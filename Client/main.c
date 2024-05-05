@@ -1,14 +1,6 @@
 #include "./include/stack.h"
 #include "./include/listColors.h"
 
-#define ANSI_COLOR_RED "\x1b[31m"
-#define ANSI_COLOR_GREEN "\x1b[32m"
-#define ANSI_COLOR_YELLOW "\x1b[33m"
-#define ANSI_COLOR_BLUE "\x1b[34m"
-#define ANSI_COLOR_MAGENTA "\x1b[35m"
-#define ANSI_COLOR_CYAN "\x1b[36m"
-#define ANSI_COLOR_RESET "\x1b[0m"
-
 #define TMAX 8
 
 typedef struct
@@ -20,16 +12,43 @@ typedef struct
 
 tGame *startGame()
 {
-  int i, j;
+  int i = 0, j;
   tGame *game = (tGame *)malloc(sizeof(tGame));
+  if(game == NULL)
+  {
+    puts("Error al asignar memoria para el juego");
+    return  NULL;
+  }
 
   game->stacks = (tStack *)malloc(sizeof(tStack) * TMAX);
-  game->list = newList();
-  game->isWinner = false;
-  if(game->stacks == NULL) return NULL;
+  if(game->stacks == NULL)
+  {
+    free(game);
+    puts("Error al asignar memoria para los stacks");
+    return NULL;
+  }
 
-  for(i = 0; i < TMAX; i++)
+  game->list = newList();
+  if(game->list == NULL)
+  {
+    free(game->stacks);
+    free(game);
+  }
+
+  game->isWinner = false;
+
+  for(; i < TMAX; i++)
+  {
     game->stacks[i] = newStack();
+    if(game->stacks[i] == NULL)
+    {
+      destroyList(game->list);
+      free(game->stacks);
+      free(game);
+      puts("Error al crear los stacks");
+      return NULL;
+    }
+  }
 
   for(i = 0; i < CMAX; i++)
     addNode(game->list, i);
@@ -38,8 +57,23 @@ tGame *startGame()
   {
     for(j = 0; j < SMAX; j++)
     {
-      char element = getRandomCharacter(game->list);
-      push(game->stacks[i], element);
+      if(i < 6)
+      {
+        char element = getRandomCharacter(game->list, deleteNode);
+        if(element == '\0')
+        {
+          int k = 0;
+          for(; k <= i; k++)
+            destroyStack(game->stacks[k]);
+
+          destroyList(game->list);
+          free(game->stacks);
+          free(game);
+          puts("Error al obtener un caracter aleatorio");
+          return NULL;
+        }
+        push(game->stacks[i], element);
+      }
     }
   }
 
@@ -59,8 +93,6 @@ int main(int argc, char *argv[])
 
   for(i = 0; i < TMAX; i++)
     printStack(game->stacks[i]);
-
-  printList(game->list);
 
   destroyList(game->list);
 

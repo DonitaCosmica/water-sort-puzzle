@@ -4,8 +4,11 @@ tList newList()
 {
   tList list = (tList)malloc(sizeof(List));
 
-  list->head = NULL;
-  list->size = 0;
+  if(list != NULL)
+  {
+    list->head = NULL;
+    list->size = 0;
+  }
 
   return list;
 }
@@ -13,17 +16,21 @@ tList newList()
 static tNodeList *newNode(unsigned short bitPosition)
 {
   tNodeList *node = (tNodeList *)malloc(sizeof(tNodeList));
-  node->limit = BMAX;
 
-  switch (bitPosition)
+  if(node != NULL)
   {
-    case 0: node->color = 'R'; break;
-    case 1: node->color = 'G'; break;
-    case 2: node->color = 'Y'; break;
-    case 3: node->color = 'B'; break;
-    case 4: node->color = 'M'; break;
-    case 5: node->color = 'C'; break;
-    default: node->color = ' ';
+    node->limit = BMAX;
+
+    switch (bitPosition)
+    {
+      case 0: node->color = 'R'; break;
+      case 1: node->color = 'G'; break;
+      case 2: node->color = 'Y'; break;
+      case 3: node->color = 'B'; break;
+      case 4: node->color = 'M'; break;
+      case 5: node->color = 'C'; break;
+      default: node->color = ' ';
+    }
   }
 
   return node;
@@ -34,15 +41,15 @@ static unsigned short getRandomNodeNumber(unsigned short listSize)
   return (rand() % listSize);
 }
 
-char getRandomCharacter(tList list)
+char getRandomCharacter(tList list, onDeleteNode deleteCurrentNode)
 {
   if(isListEmpty(list))
   {
     puts("La lista esta vacia");
-    return -1;
+    return 0;
   }
 
-  int i = 0;
+  size_t i = 0;
   unsigned short randomIndex = getRandomNodeNumber(list->size);
   tNodeList *currentNode = list->head;
 
@@ -50,6 +57,14 @@ char getRandomCharacter(tList list)
     currentNode = currentNode->sig;
 
   currentNode->limit--;
+
+  if(allBallsAreUsed(currentNode) && deleteCurrentNode != NULL)
+  {
+    char color = currentNode->color;
+    deleteCurrentNode(list, currentNode->color);
+    return color;
+  }
+
   return currentNode->color;
 }
 
@@ -60,17 +75,18 @@ bool allBallsAreUsed(tNodeList *node)
 
 bool isListFull(tList list)
 {
-  return list->size == CMAX;
+  return list->size >= CMAX;
 }
 
 bool isListEmpty(tList list)
 {
-  return list->head == NULL;
+  return list == NULL || list->head == NULL;
 }
 
 void destroyList(tList list)
 {
   free(list);
+  list = NULL;
   puts("Lista destruida");
 }
 
@@ -81,7 +97,13 @@ void addNode(tList list, unsigned short bitPosition)
     puts("La lista esta llena");
     return;
   }
+
   tNodeList *node = newNode(bitPosition);
+  if(node == NULL)
+  {
+    puts("Error al crear un nuevo nodo");
+    return;
+  }
 
   if(!isListEmpty(list))
   {
@@ -118,8 +140,11 @@ void deleteNode(tList list, char color)
   if(aux != NULL)
   {
     (prev != NULL) ? (prev->sig = aux->sig) : (list->head = aux->sig);
+    aux->sig = NULL;
     free(aux);
   }
+
+  list->size--;
 }
 
 void printList(tList list)
@@ -131,7 +156,6 @@ void printList(tList list)
   }
 
   tNodeList *aux = list->head;
-
   while(aux != NULL)
   {
     printf("Color: %c\n", aux->color);
