@@ -1,11 +1,9 @@
 #ifndef STACK_H
 #define STACK_H
 
-#define SMAX 4
-
-#include <stdio.h>
-#include <stdlib.h>
 #include <stdbool.h>
+
+#define SMAX 4
 
 typedef struct NodeStack
 {

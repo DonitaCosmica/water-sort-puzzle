@@ -1,4 +1,26 @@
-#include "../include/listColors.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <time.h>
+
+#define CMAX 6
+#define BMAX 4
+
+typedef struct NodeList
+{
+  unsigned short limit : 3;
+  char color;
+  struct NodeList *sig;
+} tNodeList;
+
+typedef struct
+{
+  tNodeList *head;
+  unsigned short size : 3;
+} List;
+
+typedef List* tList;
+typedef void (*onDeleteNode)(tList, char);
 
 tList newList()
 {
@@ -41,6 +63,22 @@ static unsigned short getRandomNodeNumber(unsigned short listSize)
   return (rand() % listSize);
 }
 
+bool allBallsAreUsed(tNodeList *node)
+{
+  return node->limit == 0;
+}
+
+bool isListFull(tList list)
+{
+  return list->size >= CMAX;
+}
+
+bool isListEmpty(tList list)
+{
+  return list == NULL || list->head == NULL;
+}
+
+
 char getRandomCharacter(tList list, onDeleteNode deleteCurrentNode)
 {
   if(isListEmpty(list))
@@ -66,28 +104,6 @@ char getRandomCharacter(tList list, onDeleteNode deleteCurrentNode)
   }
 
   return currentNode->color;
-}
-
-bool allBallsAreUsed(tNodeList *node)
-{
-  return node->limit == 0;
-}
-
-bool isListFull(tList list)
-{
-  return list->size >= CMAX;
-}
-
-bool isListEmpty(tList list)
-{
-  return list == NULL || list->head == NULL;
-}
-
-void destroyList(tList list)
-{
-  free(list);
-  list = NULL;
-  puts("Lista destruida");
 }
 
 void addNode(tList list, unsigned short bitPosition)
@@ -145,6 +161,13 @@ void deleteNode(tList list, char color)
   }
 
   list->size--;
+}
+
+void destroyList(tList list)
+{
+  free(list);
+  list = NULL;
+  puts("Lista destruida");
 }
 
 void printList(tList list)

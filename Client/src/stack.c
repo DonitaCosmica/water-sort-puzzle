@@ -1,4 +1,22 @@
-#include "../include/stack.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define SMAX 4
+
+typedef struct NodeStack
+{
+  char element;
+  struct NodeStack *prev;
+} tNodeStack;
+
+typedef struct
+{
+  tNodeStack *top;
+  unsigned short size : 3;
+} Stack;
+
+typedef Stack* tStack;
 
 tStack newStack()
 {

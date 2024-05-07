@@ -1,13 +1,9 @@
 #ifndef LISTCOLORS_H
 #define LISTCOLORS_H
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <stdbool.h>
-#include <time.h>
 
 #define CMAX 6
-#define BMAX 4
 
 typedef struct NodeList
 {
