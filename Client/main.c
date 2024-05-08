@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "./include/stack.h"
 #include "./include/listColors.h"
@@ -86,6 +87,7 @@ tGame *startGame()
 int main(int argc, char *argv[])
 {
   int i;
+  srand(time(NULL));
   tGame *game = startGame();
 
   if(game == NULL)

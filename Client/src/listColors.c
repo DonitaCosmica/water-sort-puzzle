@@ -59,7 +59,7 @@ static tNodeList *newNode(unsigned short bitPosition)
 }
 
 static unsigned short getRandomNodeNumber(unsigned short listSize)
-{
+{ 
   return (rand() % listSize);
 }
 
